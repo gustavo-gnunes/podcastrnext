@@ -1,0 +1,25 @@
+// .module.scss: esse arquivo com o nome algo.module.scss, é para identificar que esse css é especifico do arquivo que está na mesma pagina
+
+.headerContainer {
+  background: var(--white);
+  height: 6.5rem;
+
+  display: flex;
+  align-items: center; // centraliza vertical
+
+  padding: 2rem 4rem;
+
+  border-bottom: 1px solid var(--gray-100); // colocar uma borda de baixo do header
+
+  // dá para colocar o p dentro do .headerContainer, pq foi instalado um pacote chamado sass
+  p {
+    margin-left: 2rem;
+    padding: 0.25rem 0 0.25rem 2rem;
+    border-left: 1px solid var(--gray-100);
+  }
+
+  span {
+    margin-left: auto; // pega automaticamente todo o espaço disponivel
+    text-transform: capitalize; // a primeira letra de cada palavra fica maiúscula
+  }
+}

@@ -1,0 +1,97 @@
+// .module.scss: esse arquivo com o nome algo.module.scss, é para identificar que esse css é especifico do arquivo que está na mesma pagina
+
+.playerContainer {
+  padding: 3rem 4rem;
+  width: 26.5rem;
+  height: 100vh;
+
+  background: var(--purple-500);
+  color: var(--white);
+  
+  display: flex;
+  flex-direction: column; // da um espaçamento entre o header e a class emptyPlayer "div"
+  align-items: center;
+  justify-content: space-between;
+
+  header {
+    display: flex;
+    align-items: center;
+    gap: 1rem; // para ter um espaçamento em todos elementos que estiver dentro do header. Não funciona em todos navegadores
+  }
+
+  strong {
+    font-size: Lexend, sans-serif;
+    font-weight: 600;
+  }
+
+  footer {
+    align-self: stretch; // para ocupar a largura todo, pq no .playerContainer foi colocado align-items: center, se não coloca esse align-self: stretch, ele vai tentar centralizar o footer tbm
+
+    &.empty {
+       opacity: 0.5;
+    }
+  }
+}
+
+.emptyPlayer {
+  width: 100%;
+  height: 20rem;
+  border: 1.5px dashed var(--purple-300); // dashed: deixa a borda tracejada
+  border-radius: 1.5rem;
+  background: linear-gradient(143.8deg, rgba(145, 100, 250, 0.8) 0%, rgba(0, 0, 0, 0) 100%); // 143.8 de rotação e vai de uma cor até a outra, que é os rgba. Vai de uma cor até a trânsparencia
+
+  padding: 4rem;
+  text-align: center; // alinha no centro
+
+  display: flex;
+  align-items: center; // alinha vertical
+  justify-content: center;
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem; 
+
+  // tempo do vídeo
+  span {
+    display: inline-block;
+    width: 4rem;
+    text-align: center;
+  }
+
+  .slider {
+    flex: 1; // mostra a barra do vídeo
+
+    // formata a barra do vídeo
+    .emptySlider {
+      width: 100%;
+      height: 4px;
+      background: var(--purple-300);
+      border-radius: 2px;
+    }
+  }
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2.5rem;
+  gap: 1.5rem;
+
+  button {
+    background: transparent; // para o botão ficar sem cor
+    border: 0; // retira a borda do botão
+    font-size: 0; // reseta o tamanho da fonte do button. Se o botom estiver uma imagem dentro, deixando font-size: 0, ele deixa a imagem centralizado
+
+    // configura o botão play
+    &.playButton {
+      width: 4rem;
+      height: 4rem;
+      border-radius: 1rem;
+      background: var(--purple-400);
+    }
+  }
+}
