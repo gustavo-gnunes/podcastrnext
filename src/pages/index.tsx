@@ -1,10 +1,11 @@
 import { GetStaticProps } from 'next'
+import Image from 'next/image' // importa um componente de dentro do next chamado Image. Usa ele no lugar da tag <img>
 import { format, parseISO } from 'date-fns' // foi instalado no terminal este pacote, serve para converter data
 import ptBR from 'date-fns/locale/pt-BR'
 import { api } from '../services/api'
 import { convertDurationToTimesString } from '../utils/convertDurationToTimeString'
 
-//import styles from './home.module.scss'
+import styles from './home.module.scss'
 
 // existem 3 formas para conectar uma api dentro do next
 // 1 funciona em qq projeto react SPA
@@ -47,8 +48,8 @@ export default function Home({ latestEpisodes, allEpisodes }: HomeProps) {
   */
 
   return (
-    <div /*className={styles.homepage}*/>
-      <section /*className={styles.latestEpisodes}*/>
+    <div className={styles.homepage}>
+      <section className={styles.latestEpisodes}>
         <h2>Últimos lançametos</h2>
 
         <ul>
@@ -58,15 +59,70 @@ export default function Home({ latestEpisodes, allEpisodes }: HomeProps) {
               // deve ser colocada no primeiro elemento que vem dentro do map, tem que colocar uma propriedade unica, como o id, que nunca se repete
               // tem que usar isso, pq se eu tenho 1200 li, e quero excluir o li 900, a key vai até essa determinada li 
               <li key={episode.id}>
-                <a href="">{episode.title}</a>
+                {/* Para funcionar o Image, deve criar um arquivo next.config.js e passar algumas configurações */}
+                {/* Image: usa qdo tem imagem pesada, qdo a imagem de fora do sistema Ex: ela não fica na pasta public. Como não sabe como vai vim está imagem, pode ser que ela vem em uma resolução muito pesada */}
+                {/* ao em vez de tratar a imagem no back-end, para diminuir a resolução, esse componente Image do next já faz isso */}
+                {/* width e heigth: não são o tamanho que eu quero mostrar a imagem e sim a tamanho que vai ser carregado a imagem. Ex: carregar a imagem em 192px
+                 deve colocar o tamanho do width e heigth 3 vezes mais da tamanho que defino arquivo css Ex: no css o width e heigth são 64px, aqui eu deixo eles com 192px */}
+                {/* objectFit="cover": melhora a visualização da imagem */}
+                <Image width={192} height={192} src={episode.thumbnail} alt={episode.title} objectFit="cover"/>
+
+                {/* detalhes dos episodios */}
+                <div className={styles.episodeDetails}>
+                  <a href="">{episode.title}</a>
+                  <p>{episode.members}</p> {/* membros dos episodios, quem participou da gravação */}
+                  <span>{episode.publishedAt}</span>
+                  <span>{episode.durationAsString}</span>
+                </div>
+
+                <button>
+                  {/* não usa o Image, pq essa imagem está dentro do meu projeto e ela é leve */}
+                  <img src="/play-green.svg" alt="Tocar episódio"/>
+                </button>
               </li>
             )
           })}
         </ul>
       </section>
 
-      <section /*className={styles.allEpisodes}*/>
-        
+      <section className={styles.allEpisodes}>
+        <h2>Todos episódios</h2>
+
+        <table cellSpacing={0}>
+          <thead>
+            <th></th>
+            <th>Podcast</th>
+            <th>Integrantes</th>
+            <th>Data</th>
+            <th>Duração</th>
+            <th></th>
+          </thead>
+          <tbody>
+            {allEpisodes.map(episode => {
+              return (
+                // Key: propriedade padrão do react, deve colocar, senão dá erro
+                // deve ser colocada no primeiro elemento que vem dentro do map, tem que colocar uma propriedade unica, como o id, que nunca se repete
+                // tem que usar isso, pq se eu tenho 1200 li, e quero excluir o li 900, a key vai até essa determinada li 
+                <tr key={episode.id}>
+                  <td>
+                    <Image width={120} height={120} src={episode.thumbnail} alt={episode.title} objectFit="cover" />
+                  </td>
+                  <td>
+                    <a href="">{episode.title}</a>
+                  </td>
+                  <td>{episode.members}</td>
+                  <td>{episode.publishedAt}</td>
+                  <td>{episode.durationAsString}</td>
+                  <td>
+                    <button type="button">
+                      <img src="/play-green.svg" alt="Tocar episódio"/>
+                    </button>
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
       </section>
     </div>
     
