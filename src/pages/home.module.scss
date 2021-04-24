@@ -1,7 +1,8 @@
 .homepage {
-  padding: 0 4rem;
+  padding: 0 1.5rem;
   // ocupa todo o tamanho da tela tirando o cabeçalho
   height: calc(100vh - 6.5rem); // 100vh é o tamanho total da tela e 6.5rem é o tamanho do cabeçalho
+  
   overflow-y: scroll; // para pagina fazer o scrool caso passa da altura da pagina (barra de rolagem)
 
   h2 {
@@ -83,7 +84,8 @@
               top: 50%;
               // desloca -50% pra cima e -50% para esquerda, que é o width e heigth 
               // como o width e o height tem 4px, ele desloca 2px em ambos
-              transform: translate(-50%, -50%); 
+              // deixar a bolinha centro, tando na horizontal como na vertical
+              transform: translate(-50%, -50%); // eixo x e y
             }
           }
         }

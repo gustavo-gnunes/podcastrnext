@@ -1,5 +1,6 @@
 import { GetStaticProps } from 'next'
 import Image from 'next/image' // importa um componente de dentro do next chamado Image. Usa ele no lugar da tag <img>
+import Link from 'next/link' // serve para não precisar carregar todas as paginas do zero
 import { format, parseISO } from 'date-fns' // foi instalado no terminal este pacote, serve para converter data
 import ptBR from 'date-fns/locale/pt-BR'
 import { api } from '../services/api'
@@ -22,7 +23,6 @@ type Episode = {
   publishedAt: string;
   duration: number;
   durationAsString: string;
-  description: string;
   url: string;
 }
 
@@ -65,11 +65,27 @@ export default function Home({ latestEpisodes, allEpisodes }: HomeProps) {
                 {/* width e heigth: não são o tamanho que eu quero mostrar a imagem e sim a tamanho que vai ser carregado a imagem. Ex: carregar a imagem em 192px
                  deve colocar o tamanho do width e heigth 3 vezes mais da tamanho que defino arquivo css Ex: no css o width e heigth são 64px, aqui eu deixo eles com 192px */}
                 {/* objectFit="cover": melhora a visualização da imagem */}
-                <Image width={192} height={192} src={episode.thumbnail} alt={episode.title} objectFit="cover"/>
+                <Image 
+                  width={192} 
+                  height={192} 
+                  src={episode.thumbnail} 
+                  alt={episode.title} 
+                  objectFit="cover"
+                />
 
                 {/* detalhes dos episodios */}
                 <div className={styles.episodeDetails}>
-                  <a href="">{episode.title}</a>
+                  {/** Link: deve colocar por volta de todas as tag <a>, que é onde direciona para outra pagina
+                   * se não colocar esse Link, toda vez que for para outra pagina, vai carregar todo o projeto navamente, tudo que já foi carregado
+                   * com o Link, ele carrega somente o que não foi carregado ainda. Melhora a performace, deixando a navegação das paginas mais rádipo
+                   * ao em vez do href ficar na tag <a>, ele deve ficar na tag Link
+                   */}
+                  {/** /episodes: é a pagida que está dentro de pages-> episodes-> [slung].tsx 
+                    * com isso ele redireciona para outra pagina que está na pasta pages-> episodes, passando pela url o nome do id */}
+                  <Link href={`/episodes/${episode.id}`}>
+                    <a>{episode.title}</a>
+                  </Link>
+                  
                   <p>{episode.members}</p> {/* membros dos episodios, quem participou da gravação */}
                   <span>{episode.publishedAt}</span>
                   <span>{episode.durationAsString}</span>
@@ -90,12 +106,14 @@ export default function Home({ latestEpisodes, allEpisodes }: HomeProps) {
 
         <table cellSpacing={0}>
           <thead>
-            <th></th>
-            <th>Podcast</th>
-            <th>Integrantes</th>
-            <th>Data</th>
-            <th>Duração</th>
-            <th></th>
+            <tr>
+              <th></th>
+              <th>Podcast</th>
+              <th>Integrantes</th>
+              <th>Data</th>
+              <th>Duração</th>
+              <th></th>
+            </tr>
           </thead>
           <tbody>
             {allEpisodes.map(episode => {
@@ -104,11 +122,26 @@ export default function Home({ latestEpisodes, allEpisodes }: HomeProps) {
                 // deve ser colocada no primeiro elemento que vem dentro do map, tem que colocar uma propriedade unica, como o id, que nunca se repete
                 // tem que usar isso, pq se eu tenho 1200 li, e quero excluir o li 900, a key vai até essa determinada li 
                 <tr key={episode.id}>
-                  <td>
-                    <Image width={120} height={120} src={episode.thumbnail} alt={episode.title} objectFit="cover" />
+                  <td style={{ width: '72px' }}>
+                    <Image 
+                      width={120} 
+                      height={120} 
+                      src={episode.thumbnail} 
+                      alt={episode.title} 
+                      objectFit="cover" 
+                    />
                   </td>
                   <td>
-                    <a href="">{episode.title}</a>
+                    {/** Link: deve colocar por volta de todas as tag <a>, que é onde direciona para outra pagina
+                     * se não colocar esse Link, toda vez que for para outra pagina, vai carregar todo o projeto navamente, tudo que já foi carregado
+                     * com o Link, ele carrega somente o que não foi carregado ainda. Melhora a performace, deixando a navegação das paginas mais rádipo
+                     * ao em vez do href ficar na tag <a>, ele deve ficar na tag Link
+                     */}
+                    {/** /episodes: é a pagida que está dentro de pages-> episodes-> [slung].tsx 
+                      * com isso ele redireciona para outra pagina que está na pasta pages-> episodes, passando pela url o nome do id */}
+                    <Link href={`/episodes/${episode.id}`}>
+                      <a>{episode.title}</a>
+                    </Link>
                   </td>
                   <td>{episode.members}</td>
                   <td>{episode.publishedAt}</td>
@@ -124,8 +157,7 @@ export default function Home({ latestEpisodes, allEpisodes }: HomeProps) {
           </tbody>
         </table>
       </section>
-    </div>
-    
+    </div> 
   )
 }
 
@@ -172,7 +204,6 @@ export  const getStaticProps: GetStaticProps = async () => {
       publishedAt: format(parseISO(episode.published_at), 'd MMM yy', { locale: ptBR }), // formatar data, no formato brasileiro 3 Apr 21
       duration: Number(episode.file.duration),
       durationAsString: convertDurationToTimesString(Number(episode.file.duration)), // chama uma função para converter hora, minuto e segundos
-      description: episode.description,
       url: episode.file.url
     }
   })
@@ -185,6 +216,9 @@ export  const getStaticProps: GetStaticProps = async () => {
       latestEpisodes,
       allEpisodes,
     },
+    // 8h é igual a 28.800 segundos. segundos * minutos * horas
+    // qtdeMinuto = 8 * 60: qtde de horas em minutos. 
+    // qdtSegundos = qtdeMinuto * 60: qdte de minutos em segundos
     revalidate: 60 * 60 * 8, // a cada 8h vai ser chamada está pagina novamente // revalidate: de qtos em qtos segundos eu quero gerar uma nova versão desta pagina
   }
 }
