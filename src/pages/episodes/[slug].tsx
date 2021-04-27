@@ -3,7 +3,7 @@
 
 import { format, parseISO } from 'date-fns'
 import ptBR from 'date-fns/locale/pt-BR'
-import { GetStaticPaths, GetStaticProps } from 'next'
+import next, { GetStaticPaths, GetStaticProps } from 'next'
 import Image from 'next/image' // importa um componente de dentro do next chamado Image. Usa ele no lugar da tag <img>
 import Link from 'next/link'
 
@@ -66,9 +66,37 @@ export default function Episode({ episode }: EpisodeProps) {
   )
 }
 
+// este método é orbigado a usar em toda rota que está utilizando o metodo getStaticProps e tem paramentros dinamicos, que é o arquivo que tem colchetes "[sling].tsx"
 export const getStaticPaths: GetStaticPaths = async () => {
+  // .get-> para buscar episodios
+  const { data } = await api.get('episodes', {
+    params: {
+      _limit: 2, // somente 2 episodios
+      _sort: 'published_at', // os episodios fica ordenados pelo campo published_at "data" 
+      _order: 'desc'
+    }
+  })
+
+  // gera as paginas de forma staticas, que neste caso são duas
+  // essa 2 episodios que foram geradas de forma staticas, qdo o usuário clicar para ir na paginas, elas vão ser carregadas muito rápidas
+  // já as outros episodios vão demorar um pouco para ser carregadas na pagina
+  const paths = data.map(episode => {
+    return {
+      params: {
+        slug: episode.id
+      }
+    }
+  })
+
   return {
-    paths: [],
+    // paths: forma staticas. Pode colocar todos episodios do BD aqui, ou aquelas que serão mais acessadas
+    // Obs: não é aconselhado carregar todos episodios na página se tiver muita coisa. Ex: se gerar 15mil episodios de páginas staticas a build vai demorar muito prara carregar
+    paths,
+
+    // blocking: só vai mostrar a página que foi clicada para o usuário, qdo os dados já tiverem sido carregados, aí vai para a outra pagina. Conforme o usuário for acessando as paginas elas vão sendo geradas de forma staticas, sendo incrementadas no paths 
+    // true: ele mostra a tela depois carrega, se os dados não estiver no paths ele busca pra ve se tem algo. Ele muda a página para depois carregar, as vezes a página pode ficar em branco até carregar e mostrar o conteúdo
+    // false: só carrega o que está no paths, se não estiver nada ou não estiver aquela página, ele dá erro 404
+    // Obs: o blocking é a melhor opção
     fallback: 'blocking'
   }
 }

@@ -1,12 +1,17 @@
 import { GetStaticProps } from 'next'
+import { useContext } from 'react'
 import Image from 'next/image' // importa um componente de dentro do next chamado Image. Usa ele no lugar da tag <img>
 import Link from 'next/link' // serve para não precisar carregar todas as paginas do zero
 import { format, parseISO } from 'date-fns' // foi instalado no terminal este pacote, serve para converter data
 import ptBR from 'date-fns/locale/pt-BR'
+
 import { api } from '../services/api'
 import { convertDurationToTimesString } from '../utils/convertDurationToTimeString'
+import { PlayerContext } from '../contexts/PlayerContext'
 
 import styles from './home.module.scss'
+
+
 
 // existem 3 formas para conectar uma api dentro do next
 // 1 funciona em qq projeto react SPA
@@ -35,6 +40,9 @@ type HomeProps = {
 // props é a segunda forma, a primeira deve deixar vazio
 //export default function Home(props: HomeProps) {
 export default function Home({ latestEpisodes, allEpisodes }: HomeProps) {
+  // serve para pegar informações que foi passada no arquivo _app.tsx
+  const {play} = useContext(PlayerContext)
+
   /**
   // primeira forma
   // requisição modelo SPA: roda no js do browser, se desabilitar o js, o projeto não roda
@@ -50,7 +58,7 @@ export default function Home({ latestEpisodes, allEpisodes }: HomeProps) {
   return (
     <div className={styles.homepage}>
       <section className={styles.latestEpisodes}>
-        <h2>Últimos lançametos</h2>
+        <h2>Últimos lançametos {play}</h2>
 
         <ul>
           {latestEpisodes.map(episode => {
@@ -90,8 +98,10 @@ export default function Home({ latestEpisodes, allEpisodes }: HomeProps) {
                   <span>{episode.publishedAt}</span>
                   <span>{episode.durationAsString}</span>
                 </div>
-
-                <button>
+                
+                {/* qdo clicar neste botão ele pega qual é o episodio que está sendo tocado e joga o titulo na pagina player, que está na pasta componente-> Player-> index.tsx */}
+                {/* onClick={() => play(episode)}: serve para chamar a função play que está dentro do arquivo _app.tsx */}
+                <button type="button" onClick={() => play(episode)}>
                   {/* não usa o Image, pq essa imagem está dentro do meu projeto e ela é leve */}
                   <img src="/play-green.svg" alt="Tocar episódio"/>
                 </button>
