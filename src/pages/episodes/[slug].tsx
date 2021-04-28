@@ -6,6 +6,7 @@ import ptBR from 'date-fns/locale/pt-BR'
 import next, { GetStaticPaths, GetStaticProps } from 'next'
 import Image from 'next/image' // importa um componente de dentro do next chamado Image. Usa ele no lugar da tag <img>
 import Link from 'next/link'
+import { usePlayer } from '../../contexts/PlayerContext'
 
 import { api } from '../../services/api'
 import { convertDurationToTimesString } from '../../utils/convertDurationToTimeString'
@@ -29,6 +30,8 @@ type EpisodeProps = {
 }
 
 export default function Episode({ episode }: EpisodeProps) {
+  const { play } = usePlayer()
+
   return (
     <div className={styles.episode}>
       <div className={styles.thumbnailContainer}>
@@ -45,7 +48,7 @@ export default function Episode({ episode }: EpisodeProps) {
           src={episode.thumbnail} 
           objectFit="cover"
         />
-        <button type="button">
+        <button type="button" onClick={() => play(episode)}>
           <img src="/play.svg" alt="Tocar episódio"/>
         </button>
       </div>

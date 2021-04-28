@@ -1,10 +1,10 @@
-import { useContext, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import Image from 'next/image' // importa um componente de dentro do next chamado Image. Usa ele no lugar da tag <img>
 import Slider from 'rc-slider' // yarn add rc-slider
 
 import 'rc-slider/assets/index.css' // importar a estilização padrão de dentro do pacote. Importar o css
 
-import { PlayerContext } from '../../contexts/PlayerContext';
+import { usePlayer } from '../../contexts/PlayerContext';
 
 import styles from './styles.module.scss'
 
@@ -22,8 +22,14 @@ export function Player() {
     currentEpisodeIndex, 
     isPlaying, 
     togglePlay,
-    setPlayingState
-  } = useContext(PlayerContext)
+    setPlayingState,
+    playNext,
+    playPrevious,
+    hasNext,
+    hasPrevious,
+    isLooping,
+    toggleLoop
+  } = usePlayer()
 
   // tem que disparar essa função, toda vez que o isPlayin estiver seu valor alterado
   // current: é o valor da referencia
@@ -102,15 +108,17 @@ export function Player() {
             autoPlay 
             onPlay={() => setPlayingState(true)} 
             onPause={() => setPlayingState(false)} 
+            loop={isLooping} // para deixar o episodio em looping "qdo acabar, inicia novamente"
           />
         )}
 
         <div className={styles.buttons}>
           {/* disabled={!episode}: desabilitar o botão, caso não tenha episodio tocando */}
+          {/* || !hasPrevious: ou desabilita se não tem episódio anterior */}
           <button type="button" disabled={!episode}>
             <img src="/shuffle.svg" alt="Embaralhar"/>
           </button>
-          <button type="button" disabled={!episode}>
+          <button type="button" onClick={playPrevious} disabled={!episode || !hasPrevious}> 
             <img src="/play-previous.svg" alt="Tocar anterior"/>
           </button>
           {/** esse botão vai ser um pouco maior que os outros, por isso colocou um class nele */}
@@ -126,10 +134,19 @@ export function Player() {
               ? <img src="/pause.svg" alt="Tocar"/>
               : <img src="/play.svg" alt="Tocar"/>}
           </button>
-          <button type="button" disabled={!episode}>
+          {/* disabled={!episode}: desabilitar o botão, caso não tenha episodio tocando */}
+          {/* || !hasPrevious: ou desabilita se não tem próximo episódio */}
+          <button type="button" onClick={playNext} disabled={!episode || !hasNext}>
             <img src="/play-next.svg" alt="Tocar próxima"/>
           </button>
-          <button type="button" disabled={!episode}>
+          {/* onClick={toggleLoop}: qdo clicar no botão, vai entrar ou sair do loop */}
+          {/* {isLooping ? styles.isActive : '': se estiver em looping passa a class isActive no css, senão, não passa nada */}
+          <button 
+            type="button" 
+            disabled={!episode} 
+            onClick={toggleLoop}
+            className={isLooping ? styles.isActive : ''}
+          >
             <img src="/repeat.svg" alt="Repetir"/>
           </button>
         </div>

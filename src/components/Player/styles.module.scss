@@ -27,7 +27,8 @@
   footer {
     align-self: stretch; // para ocupar a largura todo, pq no .playerContainer foi colocado align-items: center, se não coloca esse align-self: stretch, ele vai tentar centralizar o footer tbm
 
-    &.empty {
+    // só é aplicado na classe empty-> progress, nos botões não
+    &.empty .progress {
        opacity: 0.5;
     }
   }
@@ -113,11 +114,21 @@
     // qdo não tem video, os botões não ficam com a mãozinha, tipo que está selecionado
     &:disabled {
       cursor: default;
+      opacity: 0.5;
     }
 
     // passar o mouse em cima de um botão que não está desabilitado
     &:hover:not(:disabled) {
       filter: brightness(0.7); // dá uma leve escurecida nos botões, menos no play
+    }
+
+    // invert(0.35): inverte a cor da botão repetir em 35%, deixa ela verde. hue-rotate(100deg): a bolinha gira 100deg pra mais ou pra menos
+    &.isActive {
+      filter: invert(0.35) sepia(1) saturate(3) hue-rotate(100deg);
+    }
+
+    &.isActive:hover {
+      filter: brightness(0.6) invert(0.35) sepia(1) saturate(3) hue-rotate(100deg);
     }
 
     // configura o botão play
