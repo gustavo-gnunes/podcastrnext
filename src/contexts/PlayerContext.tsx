@@ -29,6 +29,9 @@ type PlayerContextData = {
   hasPrevious: boolean;
   isLooping: boolean;
   toggleLoop: () => void;
+  isShuffling: boolean;
+  toggleShuffle: () => void;
+  clearPlayerState: () => void;
 }
 
 // createContext(''): se fosse passado uma string vazia '' lá no _app.tsx, aqui deve colocar o valor de uma string, se lá for passado um objeto, aqui deve passar um objeto vazio
@@ -50,6 +53,7 @@ export function PlayerContextProvider({ children }: PlayerContextProviderProps) 
   const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false) // começa com false, pq qdo não tiver nenhum video selecionado, aparece o botão play
   const [isLooping, setIsLooping] = useState(false)
+  const [isShuffling, setIsShuffling] = useState(false)
 
   // recebe um unico episodio
   // episode que está sendo tocado no momento
@@ -73,8 +77,16 @@ export function PlayerContextProvider({ children }: PlayerContextProviderProps) 
   }
 
   // para controlar se o episodio está em looping ou não
+  // Se o botão de loop estiver habilitado, qdo acabar o vídeo do episódio, ele começa novamente
+  // para funcionar no arquivo player-> index.tsx, na tag audio, deve ter a propriedade loop
   function toggleLoop() {
     setIsLooping(!isLooping); // se estiver true, vai alterar para false e se estiver false vai alterar para true
+  }
+
+  // embaralhar os episódios
+  // Se o botão de embralhar estiver habilitado, qdo acabar o vídeo do episódio, ele embralha e toca outro episódio
+  function toggleShuffle() {
+    setIsShuffling(!isShuffling) // se estiver true, vai alterar para false e se estiver false vai alterar para true
   }
 
   // está função serve para qdo o usuário aperta o botão de play e pause do teclado. 
@@ -83,13 +95,23 @@ export function PlayerContextProvider({ children }: PlayerContextProviderProps) 
     setIsPlaying(state)
   }
 
-  const hasPrevious = currentEpisodeIndex > 0
-  const hasNext = (currentEpisodeIndex + 1) < episodeList.length
+  // limpa o player, como não estivesse tocado nenhum música
+  function clearPlayerState() {
+    setEpisodioList([]); // retira tudo do array
+    setCurrentEpisodeIndex(0); // deixa o index zerado
+  }
 
-  // pular para a próximo episódio, qdo clicar no botão próximo
+  const hasPrevious = currentEpisodeIndex > 0
+  const hasNext = isShuffling || (currentEpisodeIndex + 1) < episodeList.length
+
+  // pular para a próximo episódio, qdo clicar no botão próximo ou embaralha qdo o episódio chega no final, tocando outro aleatório
   function playNext() {
-    // se for menor é pq ainda tem lista de episódio
-    if(hasNext) {
+    // servre para embaralhar os episódios
+    if(isShuffling) {
+      // embaralha pela qdte de index que tem e retornar um index. Ex: episodeList.length: tem 10 index, ele embaralha e pega um valor entre 0 a 10
+      const nextRandomEpisodeIndex = Math.floor(Math.random() * episodeList.length)
+      setCurrentEpisodeIndex(nextRandomEpisodeIndex)
+    } else if(hasNext) { // se for menor é pq ainda tem lista de episódio
       // pega o index do episósio que está tocando atualmente e add mais um "pulando para o próximo"
       setCurrentEpisodeIndex(currentEpisodeIndex + 1)
     }
@@ -121,6 +143,9 @@ export function PlayerContextProvider({ children }: PlayerContextProviderProps) 
       hasPrevious,
       isLooping,
       toggleLoop,
+      toggleShuffle,
+      isShuffling,
+      clearPlayerState,
     }}
     >
     {/* // serve para passar todo o conteúdo que está dentro do arquivo _app.tsx, por volta do PlayerContextProvider, para aqui dentro */}

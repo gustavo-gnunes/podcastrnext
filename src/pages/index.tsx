@@ -1,6 +1,7 @@
 import { GetStaticProps } from 'next'
 import Image from 'next/image' // importa um componente de dentro do next chamado Image. Usa ele no lugar da tag <img>
 import Link from 'next/link' // serve para não precisar carregar todas as paginas do zero
+import Head from 'next/head' // cabeçalho da página
 import { format, parseISO } from 'date-fns' // foi instalado no terminal este pacote, serve para converter data
 import ptBR from 'date-fns/locale/pt-BR'
 
@@ -59,6 +60,11 @@ export default function Home({ latestEpisodes, allEpisodes }: HomeProps) {
 
   return (
     <div className={styles.homepage}>
+      {/* nome que vai aparecer na aba do navegador */}
+      <Head>
+        <title>HOME | Podcastr</title>
+      </Head>
+
       <section className={styles.latestEpisodes}>
         <h2>Últimos lançametos</h2>
 

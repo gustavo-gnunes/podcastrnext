@@ -11,6 +11,9 @@ export default class MyDocument extends Document {
         <Head> {/** onde vai ficar as importações, como das fontes */}
           <link rel="preconnect" href="https://fonts.gstatic.com" /> {/** deve colocar a / no final por causa do react */}
           <link href="https://fonts.googleapis.com/css2?family=Inter&family=Lexend:wght@500;600&display=swap" rel="stylesheet" />
+       
+          {/* colocar uma imagem na aba do navegador */}
+          <link rel="shortcut icon" href="/favicon.png" type="image/png"/>
         </Head>
         <body>
           <Main /> {/** onde vai ficar a aplicação */}

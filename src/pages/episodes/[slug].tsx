@@ -4,6 +4,7 @@
 import { format, parseISO } from 'date-fns'
 import ptBR from 'date-fns/locale/pt-BR'
 import next, { GetStaticPaths, GetStaticProps } from 'next'
+import Head from 'next/head'
 import Image from 'next/image' // importa um componente de dentro do next chamado Image. Usa ele no lugar da tag <img>
 import Link from 'next/link'
 import { usePlayer } from '../../contexts/PlayerContext'
@@ -34,6 +35,11 @@ export default function Episode({ episode }: EpisodeProps) {
 
   return (
     <div className={styles.episode}>
+      {/* nome que vai aparecer na aba do navegador */}
+      <Head>
+        <title>{episode.title} | Podcastr</title>
+      </Head>
+
       <div className={styles.thumbnailContainer}>
         {/* voltar para pagina home. Colocar a tag Link, para qdo voltar pra pagima home, não carregar tudo da pagina novamente */}
         <Link href="/">
